@@ -1,6 +1,11 @@
-use std::{fs, io::{self, IsTerminal, Read}, process};
+use std::{
+    fs,
+    io::{self, IsTerminal, Read},
+    process,
+};
 
 use clap::Parser;
+use coherity::Characterizer;
 
 #[derive(Debug, Parser)]
 struct Args {
@@ -20,9 +25,12 @@ fn run(args: Args) -> io::Result<()> {
     }
 
     let text = read_input(&args)?;
-    let f_ease = coherity::flesch_reading_ease(&text);
-    let fk_grade = coherity::flesch_kincaid_grade_level(&text);
-    println!("Reading ease: {f_ease}\nFK Grade Level: {fk_grade}");
+    let characterization = Characterizer::new().characterize(&text);
+
+    let f_ease = characterization.reading_ease();
+    let fk_grade = characterization.fk_grade_level();
+
+    println!("Reading ease: {f_ease:.01}\nFK Grade Level: {fk_grade:.01}");
     Ok(())
 }
 
